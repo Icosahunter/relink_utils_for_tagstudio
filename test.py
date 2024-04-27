@@ -40,7 +40,7 @@ ext_comp_test(p4, p9)
 print('--- Comparison Index ---')
 
 def index_test(file1, file2):
-    print(f'File diff index \'{file1.name}\' and \'{file2.name}\' = {ru.file_diff_index(file1, file2)}')
+    print(f'File diff index \'{file1.name}\' and \'{file2.name}\' = {ru.file_compare_index(file1, file2)}')
 
 index_test(p1, p2)
 index_test(p1, p5)

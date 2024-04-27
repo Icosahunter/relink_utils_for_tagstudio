@@ -4,7 +4,8 @@ import filetype
 import mimetypes
 import hashlib
 
-auto_link_threshold = 0.8
+AUTO_LINK_THRESHOLD = 0.8
+HASH_BUFFER_SIZE = 65536
 
 def relink(missing_file: str|Path, files_to_search: list[Path|str], missing_file_hash: str = None):
     """
@@ -61,9 +62,9 @@ def relink_guess(missing_file: str|Path, files_to_search: list[str|Path]):
 
     weighted_files = []
     for file in _files_to_search:
-        weighted_files.append((file, file_diff_index(_missing_file, file)))
+        weighted_files.append((file, file_compare_index(_missing_file, file)))
         
-    weighted_files = [x for x in weighted_files if x[1] >= auto_link_threshold]
+    weighted_files = [x for x in weighted_files if x[1] >= AUTO_LINK_THRESHOLD]
 
     if len(weighted_files) == 0:
         return None
@@ -71,7 +72,7 @@ def relink_guess(missing_file: str|Path, files_to_search: list[str|Path]):
     weighted_files.sort(key = lambda x: x[1])
     return weighted_files[-1][0]
 
-def file_diff_index(file1: Path, file2: Path):
+def file_compare_index(file1: Path, file2: Path):
     """
         Calculates the simularity between two files by comparing their names, types, and distance from each other.
         Return value is normalized to between 0 and 1.
@@ -136,18 +137,16 @@ def is_text(file: str|Path):
     except:  # if fail then file is non-text (binary)
         return False
 
-# Yoinked from Stack Overflow (nearly unedited): https://stackoverflow.com/questions/22058048/hashing-a-file-in-python
 def hash_file(file: str|Path):
     """
         Returns a hash of the files contents.
     """
-    BUF_SIZE = 65536  # lets read stuff in 64kb chunks
 
     sha1 = hashlib.sha1()
 
     with open(file, 'rb') as f:
         while True:
-            data = f.read(BUF_SIZE)
+            data = f.read(HASH_BUFFER_SIZE)
             if not data:
                 break
             sha1.update(data)
