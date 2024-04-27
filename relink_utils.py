@@ -69,7 +69,7 @@ def relink_guess(missing_file: str|Path, files_to_search: list[str|Path]):
         return None
     
     weighted_files.sort(key = lambda x: x[1])
-    return weighted_files[0][0]
+    return weighted_files[-1][0]
 
 def file_diff_index(file1: Path, file2: Path):
     """
